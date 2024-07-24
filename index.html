@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplicación Completa</title>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <meta name="google-signin-client_id" content="TU_CLIENT_ID.apps.googleusercontent.com">
+</head>
+<body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  
+  <form id="my-form" action="https://formspree.io/f/tu_endpoint" method="POST">
+    <div id="g_id_onload"
+         data-client_id="164538105610-d0fclos8th1prrb4fem2vjllsj3cg49o.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <button type="submit">Enviar</button>
+  </form>
+  <div>
+    <p>ah bueno, chingoamimadre.....</p>
+  </div>
+
+  <script>
+    function onSignIn(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      console.log('ID: ' + profile.getId());
+      console.log('Name: ' + profile.getName());
+      console.log('Email: ' + profile.getEmail());
+
+      // Aquí puedes guardar la información del usuario
+    }
+
+    async function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          const apiKey = '70df831975a7b2014b2c3937384bc5e0';
+          const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+          const response = await fetch(url);
+          const data = await response.json();
+          console.log(data);
+        });
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
+    }
+
+    getLocation();
+
+    document.getElementById('my-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const response = await fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        alert('Tu información ha sido aceptada.');
+      } else {
+        alert('Ocurrió un error. Por favor intenta de nuevo.');
+      }
+    });
+  </script>
+</body>
+</html>
